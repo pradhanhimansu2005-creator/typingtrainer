@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Typing Snake Evolution</title>
+  <link rel="stylesheet" href="health.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Just Type .....</h2>
+    <div id="game-box">
+      <p>Word: <span id="current-word">---</span></p>
+      <input type="text" id="input-box" placeholder="Type here..." autofocus>
+      <div class="info">
+        <p>Score: <span id="score">0</span></p>
+        <p>Level: <span id="level">1</span></p>
+        <p>Health: <span id="health-bar">❤️❤️❤️</span></p>
+      </div>
+      <div id="snake-display">🐼</div>
+    </div>
+    <div id="game-over-screen" class="hidden">
+      <h2>💀 Game Over!</h2>
+      <p>Your Score: <span id="final-score">0</span></p>
+      <button onclick="startGame()">Restart</button>
+    </div>
+  </div>
+
+  <audio id="correct-sound" src="sounds/correct.mp3"></audio>
+  <audio id="wrong-sound" src="sounds/wrong.mp3"></audio>
+  <audio id="levelup-sound" src="sounds/levelup.mp3"></audio>
+  <audio id="gameover-sound" src="sounds/gameover.mp3"></audio>
+
+  <script src="health.js"></script>
+</body>
+</html>

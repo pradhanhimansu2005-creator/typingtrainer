@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ultra Legend Typing Practice</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #141E30, #243B55, #232526, #414345);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      text-align: center;
+      background: linear-gradient(145deg, #1E2A38, #232526);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      color: #ECEFF4;
+    }
+
+    h1 {
+      font-size: 42px;
+      margin-bottom: 20px;
+      color: #88C0D0;
+      text-shadow: 2px 2px #2E3440;
+    }
+
+    button {
+      background: linear-gradient(135deg, #5E81AC, #88C0D0);
+      color: #ECEFF4;
+      border: none;
+      padding: 15px 30px;
+      font-size: 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .alphabet {
+      font-size: 100px;
+      margin: 20px 0;
+      color: #D08770;
+      text-shadow: 3px 3px #2E3440;
+    }
+
+    input[type="text"] {
+      font-size: 32px;
+      padding: 12px;
+      text-align: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      color: #ECEFF4;
+      background: #2E3440;
+      caret-color: transparent;
+    }
+
+    input:focus {
+      outline: none;
+      border: 3px solid #88C0D0;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .stats div {
+      background: linear-gradient(145deg, #3B4252, #434C5E);
+      color: #D8DEE9;
+      padding: 10px 15px;
+      border-radius: 8px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+      font-size: 18px;
+    }
+
+    #saveBtn {
+      background: linear-gradient(135deg, #A3BE8C, #88C0D0);
+      color: #ECEFF4;
+      font-size: 1.2rem;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      display: none;
+      margin-top: 20px;
+    }
+
+    #saveBtn:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="startScreen">
+    <h1></h1>
+    <button id="startBtn">Start Typing</button>
+  </div>
+
+  <div class="container" id="gameContainer" style="display: none;">
+    <h1>Ultra Legend Typing Practice</h1>
+    <div class="alphabet" id="alphabet">a</div>
+    <input type="text" id="input" placeholder="Type here..." autocomplete="off">
+    <div class="stats">
+      <div>Speed: <span id="speed">0</span> WPM</div>
+      <div>Accuracy: <span id="accuracy">0</span>%</div>
+      <div>Typed: <span id="typed">0</span></div>
+      <div>Correct: <span id="correct">0</span></div>
+      <div>Errors: <span id="errors">0</span></div>
+      <div>Time: <span id="time">0.0</span>s</div>
+    </div>
+    <button id="saveBtn">Save Progress</button>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAJgqTn3PAjPBL-DPty___cjQ2dparbER8",
+      authDomain: "typing-trainer-3dd14.firebaseapp.com",
+      databaseURL: "https://typing-trainer-3dd14-default-rtdb.firebaseio.com",
+      projectId: "typing-trainer-3dd14",
+      storageBucket: "typing-trainer-3dd14.appspot.com",
+      messagingSenderId: "755712808582",
+      appId: "1:755712808582:web:200b422f1155a6db8fe307",
+      measurementId: "G-4ZM0KQL15Y"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+ 
+    const alphabetEl = document.getElementById("alphabet");
+    const inputEl = document.getElementById("input");
+    const startBtn = document.getElementById("startBtn");
+    const startScreen = document.getElementById("startScreen");
+    const gameContainer = document.getElementById("gameContainer");
+    const saveBtn = document.getElementById("saveBtn");
+
+    const stats = {
+      speed: document.getElementById("speed"),
+      accuracy: document.getElementById("accuracy"),
+      typed: document.getElementById("typed"),
+      correct: document.getElementById("correct"),
+      errors: document.getElementById("errors"),
+      time: document.getElementById("time")
+    };
+
+    let typed = 0, correct = 0, errors = 0, startTime, timer;
+
+    function randomChar() {
+      return String.fromCharCode(97 + Math.floor(Math.random() * 26));
+    }
+
+    function updateChar() {
+      alphabetEl.textContent = randomChar();
+    }
+
+    function startGame() {
+      typed = correct = errors = 0;
+      startTime = Date.now();
+      updateChar();
+      startScreen.style.display = "none";
+      gameContainer.style.display = "block";
+      saveBtn.style.display = "none";
+      timer = setInterval(updateTime, 100);
+    }
+
+    function updateTime() {
+      const seconds = ((Date.now() - startTime) / 1000).toFixed(1);
+      stats.time.textContent = seconds;
+    }
+
+    function endGame() {
+      clearInterval(timer);
+      const timeTaken = (Date.now() - startTime) / 60000;
+      const speed = Math.round((typed / 5) / timeTaken);
+      const accuracy = typed ? Math.round((correct / typed) * 100) : 0;
+
+      stats.speed.textContent = speed;
+      stats.accuracy.textContent = accuracy;
+
+      saveBtn.style.display = "inline-block";
+
+      saveBtn.onclick = () => {
+        const user = firebase.auth().currentUser;
+        if (user) {
+          db.ref(`users/${user.uid}/progress`).push({
+            speed,
+            accuracy,
+            typed,
+            correct,
+            errors,
+            time: parseFloat(stats.time.textContent),
+            source: "Ultra Legend Typing Practice",
+            timestamp: Date.now()
+          }).then(() => {
+            alert("Progress saved successfully!");
+            saveBtn.style.display = "none";
+          }).catch(err => {
+            console.error(err);
+            alert("Failed to save progress.");
+          });
+        } else {
+          alert("You must be logged in to save progress.");
+        }
+      };
+    }
+
+    inputEl.addEventListener("input", () => {
+      const input = inputEl.value.toLowerCase();
+      const target = alphabetEl.textContent;
+      typed++;
+      if (input === target) {
+        correct++;
+      } else {
+        errors++;
+      }
+      stats.typed.textContent = typed;
+      stats.correct.textContent = correct;
+      stats.errors.textContent = errors;
+      inputEl.value = "";
+      updateChar();
+
+      if (typed >= 20) endGame(); // Ends game after 20 characters
+    });
+
+    startBtn.addEventListener("click", startGame);
+  </script>
+</body>
+</html>

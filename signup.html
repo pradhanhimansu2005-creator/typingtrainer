@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #141d3f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .signup-container {
+      background: #fff;
+      padding: 35px 45px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .signup-container h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    .signup-container input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .signup-container button {
+      width: 100%;
+      padding: 12px;
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .signup-container button:hover {
+      background: #0056b3;
+    }
+
+    .error {
+      color: red;
+      margin-bottom: 10px;
+      font-size: 0.9em;
+    }
+
+    .success {
+      color: green;
+      margin-bottom: 10px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <h2>Sign Up</h2>
+    <div class="error" id="error-message"></div>
+    <div class="success" id="success-message"></div>
+    <input type="text" id="name" placeholder="Full Name" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="signUp()">Create Account</button>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAJgqTn3PAjPBL-DPty___cjQ2dparbER8",
+      authDomain: "typing-trainer-3dd14.firebaseapp.com",
+      databaseURL: "https://typing-trainer-3dd14-default-rtdb.firebaseio.com",
+      projectId: "typing-trainer-3dd14",
+      storageBucket: "typing-trainer-3dd14.appspot.com",
+      messagingSenderId: "755712808582",
+      appId: "1:755712808582:web:200b422f1155a6db8fe307",
+      measurementId: "G-4ZM0KQL15Y"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    function signUp() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      const errorEl = document.getElementById('error-message');
+      const successEl = document.getElementById('success-message');
+      errorEl.textContent = "";
+      successEl.textContent = "";
+
+      if (!name || !email || !password) {
+        errorEl.textContent = "Please fill in all fields.";
+        return;
+      }
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log("User created:", user.uid);
+
+          return db.ref('users/' + user.uid).set({
+            name: name,
+            email: email,
+            createdAt: new Date().toISOString()
+          });
+        })
+        .then(() => {
+          successEl.textContent = "Account created successfully!";
+          console.log("User data saved to Realtime Database.");
+          document.getElementById('name').value = '';
+          document.getElementById('email').value = '';
+          document.getElementById('password').value = '';
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+          errorEl.textContent = error.message;
+        });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #141d3f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .profile-container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .profile-info {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <h2>User Profile</h2>
+    <div class="profile-info" id="user-name">Name: Loading...</div>
+    <div class="profile-info" id="user-email">Email: Loading...</div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAJgqTn3PAjPBL-DPty___cjQ2dparbER8",
+      authDomain: "typing-trainer-3dd14.firebaseapp.com",
+      databaseURL: "https://typing-trainer-3dd14-default-rtdb.firebaseio.com", // Important for Realtime DB
+      projectId: "typing-trainer-3dd14",
+      storageBucket: "typing-trainer-3dd14.appspot.com",
+      messagingSenderId: "755712808582",
+      appId: "1:755712808582:web:200b422f1155a6db8fe307",
+      measurementId: "G-4ZM0KQL15Y"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        document.getElementById('user-email').textContent = `Email: ${user.email}`;
+
+        db.ref('users/' + user.uid).once('value')
+          .then((snapshot) => {
+            if (snapshot.exists()) {
+              const userData = snapshot.val();
+              document.getElementById('user-name').textContent = `Name: ${userData.name}`;
+            } else {
+              document.getElementById('user-name').textContent = 'Name: Unknown';
+            }
+          })
+          .catch((error) => {
+            console.error('Error fetching user data:', error);
+            document.getElementById('user-name').textContent = 'Name: Error loading';
+          });
+      } else {
+        document.getElementById('user-name').textContent = 'Name: Not logged in';
+        document.getElementById('user-email').textContent = 'Email: Not logged in';
+      }
+    });
+  </script>
+</body>
+</html>

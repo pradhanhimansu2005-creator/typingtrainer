@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Balloon Letter Rush</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 600% 600%;
+            animation: gradientBG 20s ease infinite;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .game-container {
+            width: 800px;
+            height: 600px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .game-area {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .balloon {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5);
+            animation: float 0.3s ease-in-out infinite alternate;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .balloon:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+
+        .balloon.popping {
+            animation: pop 0.3s forwards;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.7; }
+            100% { transform: scale(0.1); opacity: 0; }
+        }
+
+        .balloon::before {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 18px;
+            background-color: inherit;
+            bottom: -10px;
+            border-radius: 0 0 5px 5px;
+            clip-path: polygon(0 0, 100% 0, 80% 100%, 20% 100%);
+        }
+
+        .balloon::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.7);
+            bottom: -40px;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(-1deg); }
+            100% { transform: translateY(-5px) rotate(1deg); }
+        }
+
+        .stat-container {
+            position: absolute;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: bold;
+            min-width: 140px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-container:hover {
+            transform: translateX(5px);
+        }
+
+        .score-container {
+            top: 20px;
+        }
+
+        .lives-container {
+            top: 100px;
+        }
+
+        .level-container {
+            top: 180px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+        }
+
+        .lives-value {
+            display: flex;
+        }
+
+        .heart {
+            color: #ff5e5e;
+            font-size: 24px;
+            margin-right: 5px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .game-over {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .final-score {
+            margin: 20px 0 30px;
+            font-size: 24px;
+        }
+
+        .start-screen {
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 210;
+        }
+
+        .game-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #ff8a00, #e52e71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 5px rgba(246, 211, 101, 0.7); }
+            100% { text-shadow: 0 0 20px rgba(253, 160, 133, 0.9); }
+        }
+
+        .game-description {
+            font-size: 18px;
+            max-width: 500px;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            min-width: 120px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn.restart {
+            background: linear-gradient(135deg, #ff9966, #ff5e62);
+        }
+
+        .btn.resume {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .start-btn {
+            padding: 15px 40px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .pause-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 190;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .level-up-notification {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            padding: 20px 40px;
+            border-radius: 50px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 150;
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+        }
+
+        .level-up-notification.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .typing-indicator {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .controls-outside {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            z-index: 999;
+        }
+
+        @media (max-width: 850px) {
+            .game-container {
+                width: 95%;
+                height: 80vh;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .balloon {
+                width: 50px;
+                height: 70px;
+                font-size: 20px;
+            }
+
+            .game-title {
+                font-size: 36px;
+            }
+
+            .game-description {
+                font-size: 16px;
+                padding: 0 20px;
+            }
+
+            .stat-container {
+                padding: 10px;
+                min-width: 120px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .controls-outside {
+                bottom: 20px;
+                right: 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-area" id="gameArea"></div>
+
+        <div class="stat-container score-container">
+            <div class="stat-label">Score</div>
+            <div class="stat-value" id="scoreValue">0</div>
+        </div>
+
+        <div class="stat-container lives-container">
+            <div class="stat-label">Lives</div>
+            <div class="lives-value" id="livesValue">
+                <span class="heart">❤</span>
+                <span class="heart">❤</span>
+                <span class="heart">❤</span>
+            </div>
+        </div>
+
+        <div class="stat-container level-container">
+            <div class="stat-label">Level</div>
+            <div class="stat-value" id="levelValue">1</div>
+        </div>
+
+        <div class="level-up-notification" id="levelUpNotif">Level Up!</div>
+        <div class="typing-indicator" id="typingIndicator"></div>
+
+        <div class="overlay game-over" id="gameOver">
+            <div>Game Over!</div>
+            <div class="final-score">Your score: <span id="finalScore">0</span></div>
+            <button class="btn restart" id="playAgainBtn">Play Again</button>
+        </div>
+
+        <div class="overlay pause-overlay" id="pauseOverlay">Paused</div>
+
+        <div class="overlay start-screen" id="startScreen">
+            <div class="game-title">Balloon Letter Rush</div>
+            <div class="game-description">
+                Type the letters on the balloons before they reach the bottom! 
+                Each correct letter earns points. Miss too many balloons and it's game over..
+                The game gets faster as you progress through levels.
+            </div>
+            <button class="btn start-btn" id="startBtn">Start Game</button>
+        </div>
+    </div>
+
+    <!-- External controls -->
+    <div class="controls-outside">
+        <button class="btn" id="pauseBtn">Pause</button>
+        <button class="btn restart" id="restartBtn">Restart</button>
+    </div>
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const gameArea = document.getElementById('gameArea');
+            const scoreValue = document.getElementById('scoreValue');
+            const livesValue = document.getElementById('livesValue');
+            const levelValue = document.getElementById('levelValue');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            const gameOverScreen = document.getElementById('gameOver');
+            const finalScore = document.getElementById('finalScore');
+            const playAgainBtn = document.getElementById('playAgainBtn');
+            const startScreen = document.getElementById('startScreen');
+            const startBtn = document.getElementById('startBtn');
+            const pauseOverlay = document.getElementById('pauseOverlay');
+            const levelUpNotif = document.getElementById('levelUpNotif');
+            const typingIndicator = document.getElementById('typingIndicator');
+            
+            // Game state variables
+            let score = 0;
+            let lives = 3;
+            let level = 1;
+            let balloons = [];
+            let gameInterval;
+            let spawnInterval;
+            let isPaused = false;
+            let isGameOver = false;
+            let isGameStarted = false;
+            let spawnRate = 2500; // Time in ms between balloon spawns
+            let fallSpeed = 2; // Base fall speed
+            let lastKeyPressed = '';
+            let keyPressTimer;
+            
+            // Game content
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const colors = [
+                '#FF5E5E', '#FF9E5E', '#FFD25E', '#9EFF5E', 
+                '#5EFF9E', '#5EFFFF', '#5E9EFF', '#9E5EFF', 
+                '#FF5EE6', '#FF5E9E'
+            ];
+            
+            /**
+             * Initialize and start the game
+             */
+            function startGame() {
+                startScreen.classList.remove('active');
+                isGameStarted = true;
+                score = 0;
+                lives = 3;
+                level = 1;
+                updateScore();
+                updateLives();
+                updateLevel();
+                
+                isGameOver = false;
+                gameOverScreen.classList.remove('active');
+                
+                // Start spawning balloons
+                spawnInterval = setInterval(spawnBalloon, spawnRate);
+                
+                // Start game loop
+                gameInterval = setInterval(updateGame, 16); // ~60fps
+                
+                // Set up keyboard event listener
+                document.addEventListener('keydown', handleKeyPress);
+                
+                // Make balloons clickable as well
+                gameArea.addEventListener('click', handleBalloonClick);
+            }
+            
+            /**
+             * Create and append a new balloon to the game area
+             */
+            function spawnBalloon() {
+                if (isPaused || isGameOver) return;
+                
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon');
+                
+                // Random X position within the game area
+                const maxX = gameArea.clientWidth - 60; // balloon width is 60px
+                const randomX = Math.floor(Math.random() * maxX);
+                
+                // Random letter and color
+                const randomLetter = letters.charAt(Math.floor(Math.random() * letters.length));
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                balloon.style.left = `${randomX}px`;
+                balloon.style.top = '-80px'; // Start above the game area
+                balloon.style.backgroundColor = randomColor;
+                balloon.textContent = randomLetter;
+                balloon.dataset.letter = randomLetter;
+                
+                gameArea.appendChild(balloon);
+                
+                balloons.push({
+                    element: balloon,
+                    position: { x: randomX, y: -80 },
+                    speed: fallSpeed * (1 + (level - 1) * 0.2), // Increase speed with level
+                    letter: randomLetter
+                });
+            }
+            
+            /**
+             * Update balloon positions and check for missed balloons
+             */
+            function updateGame() {
+                if (isPaused || isGameOver) return;
+                
+                const gameAreaHeight = gameArea.clientHeight;
+                
+                // Move balloons down
+                for (let i = balloons.length - 1; i >= 0; i--) {
+                    const balloon = balloons[i];
+                    balloon.position.y += balloon.speed;
+                    balloon.element.style.top = `${balloon.position.y}px`;
+                    
+                    // Check if balloon reached the bottom
+                    if (balloon.position.y > gameAreaHeight) {
+                        playSound('miss');
+                        gameArea.removeChild(balloon.element);
+                        balloons.splice(i, 1);
+                        loseLife();
+                    }
+                }
+            }
+            
+            /**
+             * Handle keyboard input for popping balloons
+             */
+            function handleKeyPress(e) {
+                if (isPaused || isGameOver) return;
+                
+                const key = e.key.toUpperCase();
+                
+                // Show typing indicator
+                lastKeyPressed = key;
+                typingIndicator.textContent = `Key pressed: ${key}`;
+                clearTimeout(keyPressTimer);
+                keyPressTimer = setTimeout(() => {
+                    typingIndicator.textContent = '';
+                }, 1000);
+                
+                // Only process alphabetic keys
+                if (letters.includes(key)) {
+                    // Check if the pressed key matches any balloon letter
+                    for (let i = 0; i < balloons.length; i++) {
+                        if (balloons[i].letter === key) {
+                            // Correct key pressed, pop the balloon
+                            popBalloon(i);
+                            return; // Only pop one balloon per key press
+                        }
+                    }
+                }
+            }
+            
+            /**
+             * Handle mouse clicks on balloons
+             */
+            function handleBalloonClick(e) {
+                if (isPaused || isGameOver) return;
+                
+                // Check if clicked element is a balloon
+                if (e.target.classList.contains('balloon')) {
+                    const clickedLetter = e.target.dataset.letter;
+                    
+                    // Find the balloon in our array
+                    for (let i = 0; i < balloons.length; i++) {
+                        if (balloons[i].element === e.target) {
+                            popBalloon(i);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            /**
+             * Pop a balloon at the specified index
+             */
+            function popBalloon(index) {
+                const balloon = balloons[index];
+                
+                // Add popping animation
+                balloon.element.classList.add('popping');
+                
+                // Play pop sound with random pitch variation
+                playSound('pop');
+                
+                // Remove balloon after animation completes
+                setTimeout(() => {
+                    if (balloon.element.parentNode === gameArea) {
+                        gameArea.removeChild(balloon.element);
+                    }
+                }, 300);
+                
+                // Remove from array immediately
+                balloons.splice(index, 1);
+                
+                // Increase score
+                incrementScore();
+            }
+            
+            /**
+             * Play sound effects
+             */
+            function playSound(type) {
+                const audio = new Audio();
+                audio.volume = 0.3; // Set volume to 30% to avoid being too loud
+                
+                switch(type) {
+                    case 'pop':
+                        audio.src = 'sounds/correct.mp3';
+                        break;
+                    case 'miss':
+                        audio.src = 'sounds/wrong.mp3';
+                        break;
+                    case 'levelup':
+                        audio.src = 'sounds/levelup.mp3';
+                        break;
+                    case 'gameover':
+                        audio.src = 'sounds/gameover.mp3';
+                        break;
+                    default:
+                        return;
+                }
+                
+                audio.play().catch(e => console.log('Audio playback error:', e));
+            }
+            
+            /**
+             * Increase player's score and check for level up
+             */
+            function incrementScore() {
+                score += 10 * level; // Higher levels give more points
+                updateScore();
+                
+                // Check for level up every 100 points
+                if (score > 0 && score % 100 === 0) {
+                    levelUp();
+                }
+            }
+            
+            /**
+             * Advance to the next level and increase difficulty
+             */
+            function levelUp() {
+                level++;
+                updateLevel();
+                
+                // Increase difficulty by speeding up spawn rate (min 600ms)
+                spawnRate = Math.max(600, spawnRate - 300);
+                clearInterval(spawnInterval);
+                spawnInterval = setInterval(spawnBalloon, spawnRate);
+                
+                // Visual and audio feedback for level up
+                levelUpNotif.classList.add('active');
+                playSound('levelup');
+                setTimeout(() => {
+                    levelUpNotif.classList.remove('active');
+                }, 2000);
+            }
+            
+            /**
+             * Decrease player lives and check for game over
+             */
+            function loseLife() {
+                lives--;
+                updateLives();
+                
+                if (lives <= 0) {
+                    gameOver();
+                }
+            }
+            
+            /**
+             * Update the score display
+             */
+            function updateScore() {
+                scoreValue.textContent = score;
+            }
+            
+            /**
+             * Update the lives display
+             */
+            function updateLives() {
+                livesValue.innerHTML = '';
+                for (let i = 0; i < lives; i++) {
+                    const heart = document.createElement('span');
+                    heart.classList.add('heart');
+                    heart.textContent = '❤';
+                    livesValue.appendChild(heart);
+                }
+            }
+            
+            /**
+             * Update the level display
+             */
+            function updateLevel() {
+                levelValue.textContent = level;
+            }
+            
+            /**
+             * End the game and show game over screen
+             */
+            function gameOver() {
+                isGameOver = true;
+                playSound('gameover');
+                finalScore.textContent = score;
+                gameOverScreen.classList.add('active');
+                
+                // Remove all balloons
+                balloons.forEach(balloon => {
+                    if (balloon.element.parentNode === gameArea) {
+                        gameArea.removeChild(balloon.element);
+                    }
+                });
+                balloons = [];
+                
+                // Stop game intervals
+                clearInterval(gameInterval);
+                clearInterval(spawnInterval);
+                
+                // Remove event listeners
+                document.removeEventListener('keydown', handleKeyPress);
+                gameArea.removeEventListener('click', handleBalloonClick);
+            }
+            
+            /**
+             * Restart the game from the beginning
+             */
+            function restartGame() {
+                // Remove all existing balloons
+                balloons.forEach(balloon => {
+                    if (balloon.element.parentNode === gameArea) {
+                        gameArea.removeChild(balloon.element);
+                    }
+                });
+                balloons = [];
+                
+                // Stop existing intervals
+                clearInterval(gameInterval);
+                clearInterval(spawnInterval);
+                
+                // Reset spawn rate and pause state
+                spawnRate = 2500;
+                isPaused = false;
+                pauseBtn.textContent = 'Pause';
+                pauseBtn.classList.remove('resume');
+                pauseOverlay.classList.remove('active');
+                
+                // Clear any notifications
+                levelUpNotif.classList.remove('active');
+                typingIndicator.textContent = '';
+                
+                // Start fresh
+                startGame();
+            }
+            
+            /**
+             * Toggle game pause state
+             */
+            function togglePause() {
+                isPaused = !isPaused;
+                
+                if (isPaused) {
+                    pauseBtn.textContent = 'Resume';
+                    pauseBtn.classList.add('resume');
+                    pauseOverlay.classList.add('active');
+                    
+                    // Remove event listeners when paused
+                    document.removeEventListener('keydown', handleKeyPress);
+                    gameArea.removeEventListener('click', handleBalloonClick);
+                } else {
+                    pauseBtn.textContent = 'Pause';
+                    pauseBtn.classList.remove('resume');
+                    pauseOverlay.classList.remove('active');
+                    
+                    // Reattach event listeners when resumed
+                    document.addEventListener('keydown', handleKeyPress);
+                    gameArea.addEventListener('click', handleBalloonClick);
+                }
+            }
+            
+            // Event listeners
+            startBtn.addEventListener('click', startGame);
+            pauseBtn.addEventListener('click', togglePause);
+            restartBtn.addEventListener('click', restartGame);
+            playAgainBtn.addEventListener('click', restartGame);
+            
+            // Initialize the game
+            startScreen.classList.add('active');
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwiftType - Improve Your Typing Speed and Accuracy</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-link {
+      color: #555;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-link:hover {
+      color: #2563eb;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+
+    .btn-outline {
+      border: 1px solid #2563eb;
+      color: #2563eb;
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .btn-primary {
+      background-color: #2563eb;
+      color: white;
+      border: 1px solid #2563eb;
+    }
+
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+    }
+
+    .hero {
+      padding: 140px 0 80px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #1e293b;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #64748b;
+      max-width: 800px;
+      margin: 0 auto 40px;
+    }
+
+    .cta-button {
+      padding: 12px 24px;
+      font-size: 1.1rem;
+    }
+
+    .features {
+      padding: 80px 0;
+      background-color: white;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+    }
+
+    .feature-card {
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      font-size: 40px;
+      margin-bottom: 20px;
+      color: #2563eb;
+    }
+
+    .feature-title {
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+
+    .stats {
+      padding: 80px 0;
+      background-color: #f1f5f9;
+      text-align: center;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+    }
+
+    .stat-card {
+      padding: 20px;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      background-color: #1e293b;
+      color: white;
+      padding: 40px 0;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 10px;
+    }
+
+    .footer-section ul li a {
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-section ul li a:hover {
+      color: white;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .social-icon {
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .copyright {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #334155;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a href="#" class="logo">Typing Trainer</a>
+
+        <div class="nav-links">
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#stats" class="nav-link">Stats</a>
+         
+          <a href="#contact" class="nav-link">Contact</a>
+        </div>
+
+        <div class="auth-buttons">
+          <a href="login.html" class="btn btn-outline">Sign In</a>
+          <a href="signup.html" class="btn btn-primary">Sign Up</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Master Typing, Boost Productivity</h1>
+      <p>Develop lightning-fast typing skills with personalized lessons, real-time feedback, and progress tracking. Join thousands of users who have transformed their typing speed and accuracy.</p>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="container">
+      <h2 class="section-title">Why Choose Typing trainer?</h2>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⌨️</div>
+          <h3 class="feature-title">Personalized Lessons</h3>
+          <p>Adaptive learning algorithm tailors exercises to your skill level and areas that need improvement.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-title">Detailed Analytics</h3>
+          <p>Track your progress with comprehensive statistics, identify weak spots, and celebrate improvements.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🏆</div>
+          <h3 class="feature-title">Gamified Learning</h3>
+          <p>Earn badges, compete with friends, and climb the leaderboard while improving your skills.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats" id="stats">
+    <div class="container">
+      <h2 class="section-title">Our Community Impact</h2>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">500K+</div>
+          <p>Active Users</p>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number">45%</div>
+          <p>Average Speed Increase</p>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number">10M+</div>
+          <p>Typing Tests Completed</p>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number">98%</div>
+          <p>Satisfaction Rate</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SwiftType</h3>
+          <p>Empowering individuals and professionals to type with speed, accuracy, and confidence.</p>
+          <div class="social-icons">
+            <a href="#" class="social-icon">FB</a>
+            <a href="#" class="social-icon">TW</a>
+            <a href="#" class="social-icon">IG</a>
+            <a href="#" class="social-icon">LI</a>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h3>Resources</h3>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Tutorials</a></li>
+            <li><a href="#">Tips & Tricks</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Company</h3>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="copyright">
+        <p>&copy; 2025 SwiftType. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

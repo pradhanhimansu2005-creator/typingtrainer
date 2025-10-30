@@ -1,0 +1,123 @@
+body {
+  background: linear-gradient(135deg, #141E30, #243B55, #424b4f, #414345);
+  background-size: 400% 400%;
+  animation: gradientBG 10s ease infinite;
+  color: #ECEFF4;
+  font-family: 'Poppins', sans-serif;
+  height: 100vh;
+  margin: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(145deg, #1E2A38, #232526);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.heading {
+  margin-bottom: 20px;
+  font-size: 3rem;
+  color: #88C0D0;
+  text-shadow: 2px 2px #2E3440;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.timer, .errors, .accuracy, .cpm, .wpm {
+  background: linear-gradient(145deg, #3B4252, #434C5E);
+  color: #D8DEE9;
+  height: 60px;
+  width: 70px;
+  margin: 8px;
+  padding: 12px;
+  border-radius: 20%;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.cpm, .wpm {
+  display: none;
+}
+
+.header_text {
+  text-transform: uppercase;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #A3BE8C;
+}
+
+.curr_time, .curr_errors,
+.curr_accuracy, .curr_cpm,
+.curr_wpm {
+  font-size: 2.5rem;
+  color: #ECEFF4;
+}
+
+.quote {
+  background: #2E3440;
+  color: #D8DEE9;
+  font-size: 1.5rem;
+  margin: 10px;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.input_area {
+  background: #3B4252;
+  color: #ECEFF4;
+  height: 80px;
+  width: 80%;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 15px;
+  padding: 20px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.restart_btn {
+  display: none;
+  background: linear-gradient(135deg, #5E81AC, #88C0D0);
+  color: #ECEFF4;
+  font-size: 1.5rem;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.restart_btn:hover {
+  transform: scale(1.05);
+}
+
+.incorrect_char {
+  color: #BF616A;
+  text-decoration: underline;
+}
+
+.correct_char {
+  color: #A3BE8C;
+}

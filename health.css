@@ -1,0 +1,47 @@
+body {
+    background: #101820;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    margin-top: 50px;
+  }
+  
+  #game-box {
+    background: #1e1e2f;
+    padding: 25px;
+    border-radius: 12px;
+    display: inline-block;
+  }
+  
+  input[type="text"] {
+    padding: 10px;
+    font-size: 18px;
+    width: 300px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: none;
+  }
+  
+  .info {
+    margin-top: 20px;
+    font-size: 18px;
+  }
+  
+  #snake-display {
+    font-size: 40px;
+    margin-top: 20px;
+  }
+  
+  #game-over-screen {
+    margin-top: 30px;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Know Your Ability</title>
+    <link rel="stylesheet" href="typing2.css">
+</head>
+<body>
+  <div class="container">
+    <div class="heading">
+      Know Your Ability
+    </div>
+    <div class="header">
+      <div class="wpm">
+        <div class="header_text">WPM</div>
+        <div class="curr_wpm" id="wpm_text">100</div>
+      </div>
+      <div class="cpm">
+        <div class="header_text">CPM</div>
+        <div class="curr_cpm" id="cpm_text">100</div>
+      </div>
+      <div class="errors">
+        <div class="header_text">Errors</div>
+        <div class="curr_errors" id="error_text">0</div>
+      </div>
+      <div class="timer">
+        <div class="header_text">Time</div>
+        <div class="curr_time" id="timer_text">20s</div>
+      </div>
+      <div class="accuracy">
+        <div class="header_text">% Accuracy</div>
+        <div class="curr_accuracy" id="accuracy_text">100</div>
+      </div>
+    </div>
+
+    <div class="quote" id="quote_text">
+      Click on the area below to start the game.
+    </div>
+    <textarea class="input_area" id="input_area" placeholder="start typing here..."
+      oninput="processCurrentText()" onfocus="startGame()">
+    </textarea>
+    <button class="restart_btn" id="restart_btn" onclick="resetValues()">Restart</button>
+  </div>
+
+  <script src="typing2.js"></script>
+</body>
+</html>
